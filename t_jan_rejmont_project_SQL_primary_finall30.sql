@@ -25,7 +25,8 @@ price_data AS (
         cpc.price_value AS P_value,
         cpc.price_unit
     FROM czechia_price AS cpi
-    JOIN czechia_price_category AS cpc ON cpi.category_code = cpc.code
+    JOIN czechia_price_category AS cpc
+    	ON cpi.category_code = cpc.code
     WHERE region_code IS NOT NULL
         AND YEAR(date_from) IN (
             SELECT payroll_year 
@@ -52,6 +53,6 @@ SELECT
     pd.P_value,
     pd.price_unit,
     g.gdp
-FROM payroll_data p
+FROM payroll_data AS  p
 JOIN price_data pd ON p.payroll_year = pd.price_year
 JOIN gdp_data g ON p.payroll_year = g.year;
