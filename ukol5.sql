@@ -9,15 +9,13 @@ WITH year_data AS (
 )
 SELECT
     year,
-    avg_payroll_value,
-    avg_price_value,
-    ROUND(((avg_payroll_value - LAG(avg_payroll_value) OVER (ORDER BY year)) / LAG(avg_payroll_value) OVER (ORDER BY year)) * 100, 2) AS payroll_growth, -- Meziroční růst platů
-    ROUND(((avg_price_value - LAG(avg_price_value) OVER (ORDER BY year)) / LAG(avg_price_value) OVER (ORDER BY year)) * 100, 2) AS price_growth,        -- Meziroční růst cen potravin
-    ROUND(
-        ROUND(((avg_price_value - LAG(avg_price_value) OVER (ORDER BY year)) / LAG(avg_price_value) OVER (ORDER BY year)) * 100, 2) - 
-        ROUND(((avg_payroll_value - LAG(avg_payroll_value) OVER (ORDER BY year)) / LAG(avg_payroll_value) OVER (ORDER BY year)) * 100, 2), 2
-    ) AS difference_growth, -- Rozdíl mezi růstem cen a růstem platů
-    gdp,  -- Přidání sloupce HDP
-    ROUND(((gdp - LAG(gdp) OVER (ORDER BY year)) / LAG(gdp) OVER (ORDER BY year)) * 100, 2) AS gdp_growth  -- Meziroční růst HDP
+    CONCAT(avg_payroll_value, ' Kč') AS avg_payroll_value,  -- Průměrné mzdy s jednotkou Kč
+    CONCAT(avg_price_value, ' Kč') AS avg_price_value,       -- Průměrné ceny s jednotkou Kč
+    CONCAT(ROUND(((avg_payroll_value - LAG(avg_payroll_value) OVER (ORDER BY year)) / LAG(avg_payroll_value) OVER (ORDER BY year)) * 100, 2), ' %') AS year_on_year_payroll_growth, -- Meziroční růst platů s jednotkou %
+    CONCAT(ROUND(((avg_price_value - LAG(avg_price_value) OVER (ORDER BY year)) / LAG(avg_price_value) OVER (ORDER BY year)) * 100, 2), ' %') AS year_on_year_price_growth,        -- Meziroční růst cen potravin s jednotkou %
+    CONCAT(ROUND(((gdp - LAG(gdp) OVER (ORDER BY year)) / LAG(gdp) OVER (ORDER BY year)) * 100, 2), ' %') AS year_on_year_gdp_growth,  -- Meziroční růst HDP s jednotkou %
+    CONCAT(gdp, ' Kč') AS gdp  -- Průměrné HDP s jednotkou Kč
 FROM year_data
-ORDER BY year;
+ORDER BY YEAR;
+
+
