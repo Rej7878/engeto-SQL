@@ -12,8 +12,7 @@ JOIN countries AS c
 	ON e.country = c.country
 	WHERE YEAR BETWEEN 2006 AND 2018;
 
-SELECT *
-FROM czechia_price;
+
 
 
 

@@ -13,16 +13,22 @@ SELECT
     ROUND(AVG(CASE WHEN year = '2016' THEN price_value END), 1) AS "2016",
     ROUND(AVG(CASE WHEN year = '2017' THEN price_value END), 1) AS "2017",
     ROUND(AVG(CASE WHEN year = '2018' THEN price_value END), 1) AS "2018",
-    CONCAT(
-        ROUND(
-            ( (COALESCE(AVG(CASE WHEN year = '2018' THEN price_value END), AVG(CASE WHEN year = '2015' THEN price_value END)) - 
-                COALESCE(AVG(CASE WHEN year = '2006' THEN price_value END), AVG(CASE WHEN year = '2015' THEN price_value END))) / 
-                COALESCE(AVG(CASE WHEN year = '2006' THEN price_value END), AVG(CASE WHEN year = '2015' THEN price_value END))
-            ) * 100, 0
-        ), '%'
-    ) AS Growth 
+    ROUND(
+        (
+            (AVG(CASE WHEN year = '2007' THEN price_value END) - AVG(CASE WHEN year = '2006' THEN price_value END)) / AVG(CASE WHEN year = '2006' THEN price_value END) * 100 +
+            (AVG(CASE WHEN year = '2008' THEN price_value END) - AVG(CASE WHEN year = '2007' THEN price_value END)) / AVG(CASE WHEN year = '2007' THEN price_value END) * 100 +
+            (AVG(CASE WHEN year = '2009' THEN price_value END) - AVG(CASE WHEN year = '2008' THEN price_value END)) / AVG(CASE WHEN year = '2008' THEN price_value END) * 100 +
+            (AVG(CASE WHEN year = '2010' THEN price_value END) - AVG(CASE WHEN year = '2009' THEN price_value END)) / AVG(CASE WHEN year = '2009' THEN price_value END) * 100 +
+            (AVG(CASE WHEN year = '2011' THEN price_value END) - AVG(CASE WHEN year = '2010' THEN price_value END)) / AVG(CASE WHEN year = '2010' THEN price_value END) * 100 +
+            (AVG(CASE WHEN year = '2012' THEN price_value END) - AVG(CASE WHEN year = '2011' THEN price_value END)) / AVG(CASE WHEN year = '2011' THEN price_value END) * 100 +
+            (AVG(CASE WHEN year = '2013' THEN price_value END) - AVG(CASE WHEN year = '2012' THEN price_value END)) / AVG(CASE WHEN year = '2012' THEN price_value END) * 100 +
+            (AVG(CASE WHEN year = '2014' THEN price_value END) - AVG(CASE WHEN year = '2013' THEN price_value END)) / AVG(CASE WHEN year = '2013' THEN price_value END) * 100 +
+            (AVG(CASE WHEN year = '2015' THEN price_value END) - AVG(CASE WHEN year = '2014' THEN price_value END)) / AVG(CASE WHEN year = '2014' THEN price_value END) * 100 +
+            (AVG(CASE WHEN year = '2016' THEN price_value END) - AVG(CASE WHEN year = '2015' THEN price_value END)) / AVG(CASE WHEN year = '2015' THEN price_value END) * 100 +
+            (AVG(CASE WHEN year = '2017' THEN price_value END) - AVG(CASE WHEN year = '2016' THEN price_value END)) / AVG(CASE WHEN year = '2016' THEN price_value END) * 100 +
+            (AVG(CASE WHEN year = '2018' THEN price_value END) - AVG(CASE WHEN year = '2017' THEN price_value END)) / AVG(CASE WHEN year = '2017' THEN price_value END) * 100
+        ) 
+    , 2) AS year_on_year_Percentage_Growth
 FROM t_jan_rejmont_project_sql_primary_finall
 GROUP BY product_info
-ORDER BY Growth;
-
-
+ORDER BY year_on_year_Percentage_Growth ASC; 

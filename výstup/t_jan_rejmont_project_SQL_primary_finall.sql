@@ -1,4 +1,3 @@
-CREATE TABLE t_jan_rejmont_project_SQL_primary_finall AS
 WITH payroll_data AS (
     SELECT
         ROUND(AVG(value), 0) AS payroll_value,
