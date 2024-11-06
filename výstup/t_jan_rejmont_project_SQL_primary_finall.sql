@@ -1,4 +1,17 @@
-WITH payroll_data AS (
+CREATE OR REPLACE TABLE t_jan_rejmont_project_sql_primary_finall AS
+WITH valid_years AS (
+    SELECT DISTINCT payroll_year
+    FROM czechia_payroll
+    WHERE value_type_code = 5958 
+      AND calculation_code = 200
+      AND industry_branch_code IS NOT NULL
+      AND payroll_year IN (
+          SELECT YEAR(date_from)
+          FROM czechia_price
+          WHERE region_code IS NOT NULL
+      )
+),
+payroll_data AS (
     SELECT
         ROUND(AVG(value), 0) AS payroll_value,
         cp.payroll_year AS payroll_year,
@@ -7,34 +20,24 @@ WITH payroll_data AS (
          WHERE cp.industry_branch_code = code) AS industry_name
     FROM czechia_payroll AS cp
     WHERE value_type_code = 5958
-    	AND calculation_code = 200
-  	    AND industry_branch_code IS NOT NULL 
-  	    AND payroll_year IN (
-            SELECT YEAR(date_from) 
-            FROM czechia_price
-            WHERE region_code IS NOT NULL
-        )
+        AND calculation_code = 200
+        AND industry_branch_code IS NOT NULL 
+        AND payroll_year IN (SELECT payroll_year FROM valid_years)
     GROUP BY cp.industry_branch_code, cp.payroll_year
 ),
 price_data AS (
     SELECT
         AVG(value) AS price_value,
-        YEAR(date_from) AS price_year,		     
-        cpc.name AS product_name,
+        YEAR(date_from) AS price_year,
         cpc.price_value AS P_value,
-        cpc.price_unit
+        cpc.price_unit,
+        cpc.name AS product_name
     FROM czechia_price AS cpi
     JOIN czechia_price_category AS cpc
-    	ON cpi.category_code = cpc.code
+        ON cpi.category_code = cpc.code
     WHERE region_code IS NOT NULL
-    	AND category_code != 212101
-        AND YEAR(date_from) IN (
-            SELECT payroll_year 
-            FROM czechia_payroll 
-            WHERE value_type_code = 5958 
-              AND calculation_code = 200
-              AND industry_branch_code IS NOT NULL
-        )
+        AND category_code != 212101
+        AND YEAR(date_from) IN (SELECT payroll_year FROM valid_years)
     GROUP BY YEAR(date_from), cpc.name
 ),
 gdp_data AS (
@@ -42,7 +45,8 @@ gdp_data AS (
         year,
         gdp
     FROM economies
-    WHERE country = 'Czech Republic' AND year BETWEEN 2006 AND 2018
+    WHERE country = 'Czech Republic' 
+      AND year IN (SELECT payroll_year FROM valid_years)
 )
 SELECT 
     g.year,
@@ -53,7 +57,9 @@ SELECT
     pd.P_value,
     pd.price_unit,
     g.gdp
-FROM payroll_data AS  p
+FROM payroll_data AS p
 JOIN price_data pd ON p.payroll_year = pd.price_year
 JOIN gdp_data g ON p.payroll_year = g.year;
+
+
 
