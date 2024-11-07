@@ -1,3 +1,9 @@
+/*
+Script je napsany pro vizualizace v SQL
+*/
+
+
+
 WITH year_data AS (
     SELECT
         year,

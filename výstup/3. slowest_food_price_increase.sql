@@ -1,3 +1,8 @@
+/*
+Script je napsany pro vizualizace v SQL
+*/
+
+
 SELECT 
     CONCAT(product_name, ' ', p_value, ' ', price_unit) AS product_info,
     ROUND(AVG(CASE WHEN year = '2006' THEN price_value END), 1) AS "2006",
@@ -32,3 +37,4 @@ SELECT
 FROM t_jan_rejmont_project_sql_primary_finall
 GROUP BY product_info
 ORDER BY year_on_year_Percentage_Growth ASC; 
+

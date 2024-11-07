@@ -1,3 +1,9 @@
+/*
+Script je napsany pro vizualizace v SQL
+*/
+
+
+
 SELECT 
     industry_name,
     AVG(CASE WHEN year = '2006' THEN payroll_value END) AS "2006",
